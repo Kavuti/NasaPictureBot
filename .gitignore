@@ -1,2 +1,5 @@
-configuration/configuration.json
 /.idea
+/Pipfile.lock
+/Pipfile
+/configuration/
+/configuration/configuration.json
