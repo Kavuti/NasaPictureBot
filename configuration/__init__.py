@@ -38,6 +38,13 @@ class Configuration:
         """
         return self.__json_conf['nasa_api_key']
 
+    def get_db_uri(self):
+        """
+        This method returns the database URI from the configuration
+        :return:
+        """
+        return self.__json_conf['db_uri']
+
 
 current_configuration = Configuration()
 
