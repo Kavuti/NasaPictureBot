@@ -1,5 +1,10 @@
 import json
+import logging.config
+import os
 
+file_dir = os.path.split(os.path.realpath(__file__))[0]
+logging.config.fileConfig(os.path.join(file_dir, 'logging.ini'),
+                          disable_existing_loggers=False)
 
 class Configuration:
     """
@@ -9,6 +14,7 @@ class Configuration:
         with open('configuration/configuration.json', 'r') as configuration_file:
             configuration_file_content = configuration_file.read()
             self.__json_conf = json.loads(configuration_file_content)
+            self.__logger = logging.getLogger('root')
 
     def get_api_id(self):
         """
@@ -45,9 +51,17 @@ class Configuration:
         """
         return self.__json_conf['db_uri']
 
+    def get_logger(self):
+        """
+        This method returns a configured logger.
+        :return:
+        """
+        return self.__logger
+
 
 current_configuration = Configuration()
 
 
 def get_current():
     return current_configuration
+
