@@ -1,3 +1,7 @@
 {
-    "bot_token": "your_bot_token"
+    "api_id": 78943,
+    "api_hash": "570ab960230979af02c682e4e0a5c00b",
+    "bot_token": "1028215394:AAFDtRXPGztDSTJyvBxIHATf0f4fJjY6iug",
+    "nasa_api_key": "ZeyhCFbkce9a3MwFQd3ddGn9jlomH5TUkB6HlNzt",
+    "db_uri": "postgres://ypekdohkmvmcew:8acf4f708538c87049c3ab7b34b1a57583753910c690f23f798db96c1313141c@ec2-54-247-181-232.eu-west-1.compute.amazonaws.com:5432/db9078uu8gljrn"
 }
