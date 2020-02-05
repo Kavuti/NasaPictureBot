@@ -15,6 +15,10 @@ db_initialized = False
 logger = conf.get_logger()
 
 
+def get_photo():
+    return request_session.get(nasa_url)
+
+
 def pre_operations(message):
     global db_initialized
     if not db_initialized:
@@ -40,7 +44,7 @@ def send_picture(client, message):
     pre_operations(message)
     user = db.get_user(message.from_user.id)
     logger.info(f'The user {user["username"]} ({user["id"]}) requested his image now.')
-    json_resp = request_session.get(nasa_url).json()
+    json_resp = get_photo().json()
     bot.send_photo(message.from_user.id, json_resp['hdurl'])
     message_string = f"Hi! This is the image of today. Enjoy it!\n" \
                      f"**{json_resp['title']}**\n\n" \
@@ -54,7 +58,7 @@ def send_picture(client, message):
 
 def send_picture_to_all():
     logger.info("Sending today's picture to all users")
-    json_resp = request_session.get(nasa_url).json()
+    json_resp = get_photo().json()
     users = db.get_all_users("sent = false")
     if users:
         for user in users:
@@ -80,10 +84,11 @@ def reset_users_sent():
     db.change_sent(False)
 
 
-schedule.every().day.at("09:00").do(send_picture_to_all)
-schedule.every().day.at("00:00").do(reset_users_sent)
+if __name__ == '__main__':
+    schedule.every().day.at("09:00").do(send_picture_to_all)
+    schedule.every().day.at("00:00").do(reset_users_sent)
 
-with bot:
-    while True:
-        schedule.run_pending()
-        time.sleep(1)
+    with bot:
+        while True:
+            schedule.run_pending()
+            time.sleep(1)
