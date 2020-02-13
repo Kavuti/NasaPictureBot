@@ -1,3 +1,5 @@
+import flask
+import os
 import configuration
 import requests
 import schedule
@@ -5,6 +7,7 @@ import time
 import db
 from pyrogram import Client, Filters
 from pyrogram.errors import BadRequest
+from flask import *
 
 conf = configuration.get_current()
 bot = Client(":memory:", bot_token=conf.get_bot_token(), api_id=conf.get_api_id(), api_hash=conf.get_api_hash())
@@ -13,6 +16,8 @@ request_session = requests.Session()
 
 db_initialized = False
 logger = conf.get_logger()
+
+flask_app = Flask(__name__)
 
 
 def get_photo():
@@ -85,6 +90,7 @@ def reset_users_sent():
 
 
 if __name__ == '__main__':
+    flask_app.run(host='0.0.0.0', port=os.environ.get('PORT') or 5000)
     schedule.every().day.at("09:00").do(send_picture_to_all)
     schedule.every().day.at("00:00").do(reset_users_sent)
 
