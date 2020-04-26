@@ -1,4 +1,3 @@
-import flask
 import os
 import configuration
 import requests
@@ -7,7 +6,6 @@ import time
 import db
 from pyrogram import Client, Filters
 from pyrogram.errors import BadRequest
-from flask import *
 
 conf = configuration.get_current()
 bot = Client(":memory:", bot_token=conf.get_bot_token(), api_id=conf.get_api_id(), api_hash=conf.get_api_hash())
@@ -16,8 +14,6 @@ request_session = requests.Session()
 
 db_initialized = False
 logger = conf.get_logger()
-
-flask_app = Flask(__name__)
 
 
 def get_photo():
@@ -50,7 +46,8 @@ def send_picture(client, message):
     user = db.get_user(message.from_user.id)
     logger.info(f'The user {user["username"]} ({user["id"]}) requested his image now.')
     json_resp = get_photo().json()
-    bot.send_photo(message.from_user.id, json_resp['hdurl'])
+    logger.info(json_resp)
+    send_action(message.from_user.id, json_resp)
     message_string = f"Hi! This is the image of today. Enjoy it!\n" \
                      f"**{json_resp['title']}**\n\n" \
                      f"{json_resp['explanation']}"
@@ -68,7 +65,7 @@ def send_picture_to_all():
     if users:
         for user in users:
             try:
-                bot.send_photo(user['id'], json_resp['hdurl'])
+                send_action(user['id'], json_resp)
                 message_string = f"Hi! This is the image of today. Enjoy it!\n" \
                                  f"**{json_resp['title']}**\n\n" \
                                  f"{json_resp['explanation']}"
@@ -84,13 +81,25 @@ def send_picture_to_all():
         db.change_sent(True)
 
 
+def send_action(user_id, response):
+    resource = None
+    if 'hdurl' in response:
+        resource = response['hdurl']
+    else:
+        resource = response['url']
+
+    if response['media_type'] == 'image':
+        bot.send_photo(user_id, resource)
+    else:
+        bot.send_message(user_id, resource)
+
+
 def reset_users_sent():
     logger.info("Resetting sent for all users")
     db.change_sent(False)
 
 
 if __name__ == '__main__':
-    flask_app.run(host='0.0.0.0', port=os.environ.get('PORT') or 5000)
     schedule.every().day.at("09:00").do(send_picture_to_all)
     schedule.every().day.at("00:00").do(reset_users_sent)
 

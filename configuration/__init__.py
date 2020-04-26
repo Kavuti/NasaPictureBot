@@ -20,6 +20,7 @@ class Configuration:
             self.__bot_token = os.environ.get('BOT_TOKEN')
             self.__nasa_api_key = os.environ.get('NASA_API_KEY')
             self.__db_uri = os.environ.get('DATABASE_URL')
+            self.__session_string = os.environ.get('SESSION_STRING')
         else:
             with open('configuration/configuration.json', 'r') as configuration_file:
                 configuration_file_content = configuration_file.read()
@@ -29,6 +30,7 @@ class Configuration:
                 self.__bot_token = __json_conf['bot_token']
                 self.__nasa_api_key = __json_conf['nasa_api_key']
                 self.__db_uri = __json_conf['db_uri']
+                self.__session_string = __json_conf['session_string']
         self.__logger = logging.getLogger('root')
 
     def get_api_id(self):
@@ -72,6 +74,13 @@ class Configuration:
         :return:
         """
         return self.__logger
+
+    def get_session_string(self):
+        """
+        
+        :return:
+        """
+        return self.__session_string
 
 
 current_configuration = Configuration()
