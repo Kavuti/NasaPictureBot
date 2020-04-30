@@ -46,7 +46,6 @@ def send_picture(client, message):
     user = db.get_user(message.from_user.id)
     logger.info(f'The user {user["username"]} ({user["id"]}) requested his image now.')
     json_resp = get_photo().json()
-    logger.info(json_resp)
     send_action(message.from_user.id, json_resp)
     message_string = f"Hi! This is the image of today. Enjoy it!\n" \
                      f"**{json_resp['title']}**\n\n" \
@@ -82,13 +81,10 @@ def send_picture_to_all():
 
 
 def send_action(user_id, response):
-    resource = None
-    if 'hdurl' in response:
-        resource = response['hdurl']
-    else:
-        resource = response['url']
+    resource = response['url']
 
     if response['media_type'] == 'image':
+        print(resource)
         bot.send_photo(user_id, resource)
     else:
         bot.send_message(user_id, resource)
